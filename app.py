@@ -8,7 +8,6 @@ load_dotenv()
 
 # Verify API key is loaded
 api_key = os.getenv('GOOGLE_API_KEY')
-print(f"Loaded API key: {api_key[:10]}...") # This will show just the first 10 characters
 if not api_key:
     raise ValueError("GOOGLE_API_KEY not found in environment variables")
 
@@ -41,7 +40,11 @@ def clean_response_text(text):
 
 @app.route('/')
 def home():
-    return render_template('mschatbot.html')
+    return render_template('index.html')
+
+@app.route('/mhchatbot')
+def chatbot():
+    return render_template('mhchatbot.html')
 
 @app.route('/chat', methods=['POST'])
 def chat_endpoint():
