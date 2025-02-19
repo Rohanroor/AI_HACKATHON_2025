@@ -102,35 +102,46 @@ def chat_endpoint():
             'error': str(e)
         }), 500
 
-@app.route('/predict', methods=['GET', 'POST'])
+
+@app.route('/diabetes', methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
         try:
-            # Get form data
-            pregnancies = int(request.form['pregnancies'])
-            glucose = int(request.form['glucose'])
-            blood_pressure = int(request.form['blood-pressure'])
-            skin_thickness = int(request.form['skin-thickness'])
-            insulin = int(request.form['insulin'])
-            bmi = float(request.form['bmi'])
-            diabetes_pedigree = float(request.form['diabetes-pedigree'])
-            age = int(request.form['age'])
-            
-            data = [pregnancies, glucose, blood_pressure, skin_thickness, 
-                    insulin, bmi, diabetes_pedigree, age]
-            
-            # Load model and make prediction
+            # Get JSON data from the request
+            data = request.get_json()
+
+            # Convert values
+            pregnancies = int(data['pregnancies'])
+            glucose = int(data['glucose'])
+            blood_pressure = int(data['blood-pressure'])
+            skin_thickness = int(data['skin-thickness'])
+            insulin = int(data['insulin'])
+            bmi = float(data['bmi'])
+            diabetes_pedigree = float(data['diabetes-pedigree'])
+            age = int(data['age'])
+
+            # Create feature array
+            input_data = [pregnancies, glucose, blood_pressure, skin_thickness,
+                          insulin, bmi, diabetes_pedigree, age]
+
+            # Load model and predict
             with open('model.pickle', 'rb') as file:
                 model = pickle.load(file)
-            result = model.predict([data])
-            
-            outcome = 'No Diabetic' if result[0] == 0 else 'Diabetic Patient'
-            return jsonify({'message': outcome})
-            
+            prediction = model.predict([input_data])[0]
+
+            # Create response message
+            if prediction == 0:
+                message = "Based on our analysis, you show no signs of diabetes. However, maintain regular check-ups."
+            else:
+                message = "Our prediction indicates a risk of diabetes. Please consult a healthcare professional."
+
+            return jsonify({'message': message})
+
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
-    
-    return render_template('predict.html')
+            return jsonify({'error': str(e)}), 400
+
+    # GET request - show form
+    return render_template('diabetes.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
