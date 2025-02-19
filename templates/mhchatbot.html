@@ -60,6 +60,7 @@
         }
 
         function sendMessage() {
+            
             const input = document.getElementById('user-input');
             const message = input.value.trim();
             
@@ -67,7 +68,8 @@
                 addMessage(message, true);
                 input.value = '';
 
-                fetch('/chat', {
+                fetch("{{ url_for('chat_endpoint') }}", {  // Update this line
+                    method: 'POST',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
