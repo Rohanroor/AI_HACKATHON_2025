@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Health App - Predict Diabetes</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary: #2A9D8F;
+      --secondary: #E76F51;
+      --background: #F8F9FA;
+      --text: #343A40;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto 20px;
+      padding: 2rem;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      color: var(--background);
+      text-align: center;
+    }
+    h2 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+    }
+
+    .submit-btn {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      background: #d45b3d;
+      transform: translateY(-2px);
+    }
+
+    .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #f8f9fa;
+      display: none;
+    }
+    .diabetic {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    .non-diabetic {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    header {
+            background: linear-gradient(135deg, var(--primary) 0%, #21867a 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            height: 80px;
+        }
+
+    .pill {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      z-index: 1;
+      animation: bounce 6s ease-in-out infinite;
+    }
+    .pill.small { width: 10px; height: 10px; }
+    .pill.medium { width: 20px; height: 20px; }
+    .pill.large { width: 30px; height: 30px; }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #d45b3d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+  </style>
+</head>
+<body>
+  <header>
+        <div class="pill small" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="pill medium" style="top: 15%; left: 20%; animation-delay: 0.3s;"></div>
+    <div class="pill large" style="top: 5%; left: 30%; animation-delay: 0.5s;"></div>
+    <div class="pill small" style="top: 25%; left: 10%; animation-delay: 0.7s;"></div>
+    <div class="pill medium" style="top: 30%; left: 50%; animation-delay: 1.0s;"></div>
+    <div class="pill large" style="top: 35%; left: 80%; animation-delay: 1.2s;"></div>
+    <div class="pill small" style="top: 45%; left: 20%; animation-delay: 1.5s;"></div>
+    <div class="pill medium" style="top: 50%; left: 70%; animation-delay: 1.7s;"></div>
+    <div class="pill large" style="top: 60%; left: 30%; animation-delay: 1.9s;"></div>
+    <div class="pill small" style="top: 65%; left: 10%; animation-delay: 2.1s;"></div>
+    <div class="pill medium" style="top: 70%; left: 40%; animation-delay: 2.3s;"></div>
+    <div class="pill large" style="top: 80%; left: 60%; animation-delay: 2.5s;"></div>
+    <div class="pill small" style="top: 5%; left: 80%; animation-delay: 2.7s;"></div>
+    <div class="pill medium" style="top: 15%; left: 90%; animation-delay: 2.9s;"></div>
+    <div class="pill large" style="top: 25%; left: 70%; animation-delay: 3.1s;"></div>
+    <div class="pill small" style="top: 35%; left: 5%; animation-delay: 3.3s;"></div>
+    <div class="pill medium" style="top: 55%; left: 90%; animation-delay: 3.5s;"></div>
+    <div class="pill large" style="top: 65%; left: 50%; animation-delay: 3.7s;"></div>
+    <div class="pill small" style="top: 75%; left: 20%; animation-delay: 3.9s;"></div>
+    <div class="pill medium" style="top: 85%; left: 10%; animation-delay: 4.1s;"></div>
+        <h1>Rakshak: Diabetes Prediction</h1>
+        <button id="backBtn">Back</button>
+        <!-- Add bouncing pills from index.html -->
+
+    </header>
+
+
+  <div class="container">
+    <h2>Predict Diabetes</h2>
+    <!-- Note the method is POST and the id is "predictionForm" -->
+    <form id="predictionForm" method="POST">
+      <div class="form-group">
+        <label for="pregnancies">Number of Pregnancies:</label>
+        <input type="number" id="pregnancies" name="pregnancies" required>
+      </div>
+      <div class="form-group">
+        <label for="glucose">Glucose Level:</label>
+        <input type="number" id="glucose" name="glucose" required>
+      </div>
+      <div class="form-group">
+        <label for="blood-pressure">Blood Pressure:</label>
+        <input type="number" id="blood-pressure" name="blood-pressure" required>
+      </div>
+      <div class="form-group">
+        <label for="skin-thickness">Skin Thickness:</label>
+        <input type="number" id="skin-thickness" name="skin-thickness" required>
+      </div>
+      <div class="form-group">
+        <label for="insulin">Insulin Level:</label>
+        <input type="number" id="insulin" name="insulin" required>
+      </div>
+      <div class="form-group">
+        <label for="bmi">BMI:</label>
+        <input type="number" id="bmi" name="bmi" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="diabetes-pedigree">Diabetes Pedigree Function:</label>
+        <input type="number" id="diabetes-pedigree" name="diabetes-pedigree" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+      </div>
+      <button class="submit-btn" type="submit">Predict</button>
+    </form>
+
+    <!-- This container will show the prediction result -->
+    <div id="resultContainer" class="result-box">
+      <h2>Prediction Result:</h2>
+      <p id="resultText"></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Gather form data as JSON
+      const formData = {
+  pregnancies: parseInt(document.getElementById('pregnancies').value),
+  glucose: parseInt(document.getElementById('glucose').value),
+  "blood-pressure": parseInt(document.getElementById('blood-pressure').value),
+  "skin-thickness": parseInt(document.getElementById('skin-thickness').value),
+  insulin: parseInt(document.getElementById('insulin').value),
+  bmi: parseFloat(document.getElementById('bmi').value),
+  "diabetes-pedigree": parseFloat(document.getElementById('diabetes-pedigree').value),
+  age: parseInt(document.getElementById('age').value)
+};
+
+
+      try {
+        const response = await fetch('/diabetes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        const result = await response.json();
+
+        // Show the result
+        const resultContainer = document.getElementById('resultContainer');
+        const resultText = document.getElementById('resultText');
+
+        if (result.error) {
+          resultText.textContent = "Error: " + result.error;
+          resultContainer.className = 'result-box diabetic';
+        } else {
+          resultText.textContent = result.message;
+          // Change class based on message content
+          if (result.message.includes('Diabetic')) {
+            resultContainer.className = 'result-box diabetic';
+          } else {
+            resultContainer.className = 'result-box non-diabetic';
+          }
+        }
+        resultContainer.style.display = 'block';
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      }
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+  window.location.href = '/';
+});
+  </script>
+</body>
+</html>
