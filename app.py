@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import pickle
+import PIL.Image
 # Load environment variables
 load_dotenv()
 
@@ -41,6 +42,14 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
     safety_settings=safety_settings
 )
+
+# Update vision model initialization
+vision_model = genai.GenerativeModel(
+    model_name='gemini-1.5-flash',
+    generation_config=generation_config,
+    safety_settings=safety_settings
+)
+
 # Initialize chat with doctor context
 doctor_context = """Your name is Rakshak, and your a personal health care companion, trained by team Old Monk. You are specially designed and catered for only one purpose which is to provide mental and physical health care and support to the users of Rakshak health care support platform.  You are a knowledgeable and empathetic medical AI chat bot with expertise in both mental and physical health care. 
 Your role is to provide supportive, professional medical guidance while maintaining a compassionate approach. 
@@ -274,6 +283,39 @@ def symptoms_diagnosis():
                 diagnosis=f"Error analyzing symptoms: {str(e)}")
 
     return render_template('symptoms.html', diagnosis=diagnosis)
+
+@app.route('/skin-health', methods=['GET', 'POST'])
+def skin_health():
+    if request.method == 'POST':
+        try:
+            if 'image' not in request.files:
+                return jsonify({'error': 'No image uploaded'}), 400
+                
+            image_file = request.files['image']
+            if image_file.filename == '':
+                return jsonify({'error': 'No selected file'}), 400
+
+            # Process image and generate analysis
+            img = PIL.Image.open(image_file.stream)
+            
+            prompt = """Act as a dermatologist. Analyze this skin image and:
+            1. Describe visible findings
+            2. List possible conditions (most likely first)
+            3. Suggest diagnostic steps
+            4. Recommend treatment options
+            5. Note urgency level
+            Use clear, non-technical language. Remind to consult a real doctor."""
+
+            response = vision_model.generate_content([prompt, img])
+            cleaned_response = clean_response_text(response.text)
+            
+            return jsonify({'analysis': cleaned_response})
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    # GET request - show form
+    return render_template('skin_health.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
