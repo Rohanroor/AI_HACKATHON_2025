@@ -14,8 +14,43 @@ if not api_key:
 # Initialize Flask app and configure Gemini API
 app = Flask(__name__)
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-pro')
-chat = model.start_chat(history=[])  # Initialize a persistent chat session
+generation_config = genai.GenerationConfig(
+    temperature=0.9,
+    candidate_count=1,
+)
+safety_settings = [
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_NONE",
+    },
+]
+model = genai.GenerativeModel(
+    model_name='gemini-pro',
+    generation_config=generation_config,
+    safety_settings=safety_settings
+)
+# Initialize chat with doctor context
+doctor_context = """You are a knowledgeable and empathetic medical doctor with expertise in mental health. 
+Your role is to provide supportive, professional medical guidance while maintaining a compassionate approach. 
+While you can offer general medical advice and information, always remind users that you cannot replace their actual healthcare provider 
+and encourage them to seek professional medical help for specific diagnoses or treatment plans."""
+
+chat = model.start_chat(history=[
+    {'role': 'user', 'parts': ['Please act as a medical doctor with the following context: ' + doctor_context]},
+    {'role': 'model', 'parts': ['I understand. I will act as a medical doctor with the specified context and guidelines.']}
+])
 
 def clean_response_text(text):
     # Remove markdown bold syntax
