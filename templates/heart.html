@@ -220,19 +220,16 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = analysis;
             
-            // Reset all classes first
-            resultDiv.className = 'result-box';
+            // Default text color
+            resultDiv.style.color = '#343A40'; // Black color
             
-            // Check risk level and apply styling
+            // Risk level coloring
             if (analysis.includes('High Risk')) {
                 resultDiv.classList.add('risk-high');
-                resultDiv.style.color = '#dc3545'; // Red text for high risk
             } else if (analysis.includes('Moderate Risk')) {
                 resultDiv.classList.add('risk-medium');
-                resultDiv.style.color = '#ffc107'; // Yellow text for medium
-            } else {
+            } else if (analysis.includes('Low Risk')) {
                 resultDiv.classList.add('risk-low');
-                resultDiv.style.color = '#28a745'; // Green text for low
             }
         }
     </script>

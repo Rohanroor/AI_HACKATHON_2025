@@ -93,15 +93,42 @@
             margin-bottom: 2rem;
             font-size: 2.5rem;
         }
+
+        .back-btn {
+            width: 180px;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #21867a;
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            color: #343A40;
+        }
     </style>
 </head>
 <body>
-    <!-- Header from index.html -->
     <header>
-        <!-- ... same header content as index.html ... -->
+        <div class="pill small" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="pill medium" style="top: 15%; left: 20%; animation-delay: 0.3s;"></div>
+        <div class="pill large" style="top: 5%; left: 30%; animation-delay: 0.5s;"></div>
+        <div class="pill small" style="top: 25%; left: 10%; animation-delay: 0.7s;"></div>
+        <div class="pill medium" style="top: 30%; left: 50%; animation-delay: 1.0s;"></div>
+        <div class="pill large" style="top: 35%; left: 80%; animation-delay: 1.2s;"></div>
+        
+        <h1>Skin Health Analysis</h1>
+        <button class="back-btn" onclick="window.location.href='/'">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </button>
     </header>
 
-    <!-- Navigation from index.html -->
     <nav>
         <!-- ... same navigation content as index.html ... -->
     </nav>
