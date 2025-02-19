@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Healthcare Facilities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Inherit your existing styles */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #2A9D8F;
+            --secondary: #E76F51;
+            --background: #F8F9FA;
+            --text: #343A40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            padding: 2rem;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #21867a;
+        }
+
+        .facilities-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .facility-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .facility-info h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .facility-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .facility-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .facility-actions button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            color: #ffd700;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="location" placeholder="Enter your location">
+            <button onclick="searchFacilities()">Search</button>
+        </div>
+        <div class="facilities-list" id="facilitiesList">
+            <!-- Results will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        function searchFacilities() {
+            const location = document.getElementById('location').value;
+            
+            fetch('/get-nearby-facilities', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ location: location })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const facilitiesList = document.getElementById('facilitiesList');
+                facilitiesList.innerHTML = '';
+                
+                data.facilities.forEach(facility => {
+                    const facilityCard = `
+                        <div class="facility-card">
+                            <div class="facility-info">
+                                <h3>${facility.name}</h3>
+                                <div class="facility-meta">
+                                    <p>${facility.type} • ${facility.distance}</p>
+                                    <p>${facility.address}</p>
+                                    <div class="rating">
+                                        ${'★'.repeat(Math.floor(facility.rating))}${'☆'.repeat(5-Math.floor(facility.rating))}
+                                        ${facility.rating}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="facility-actions">
+                                <button onclick="window.open('https://maps.google.com/?q=${facility.name}')">
+                                    <i class="fas fa-directions"></i> Directions
+                                </button>
+                                <button onclick="window.open('tel:+1234567890')">
+                                    <i class="fas fa-phone"></i> Call
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    facilitiesList.innerHTML += facilityCard;
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
