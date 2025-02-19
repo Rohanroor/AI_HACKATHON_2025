@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Disease Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Inherit existing styles from index.html */
+        :root {
+            --primary: #2A9D8F;
+            --secondary: #E76F51;
+            --background: #F8F9FA;
+            --text: #343A40;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 160px auto 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #d45b3d;
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+
+        .risk-high { color: #dc3545; }
+        .risk-medium { color: #ffc107; }
+        .risk-low { color: #28a745; }
+
+        /* Add to existing styles */
+        .pill {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            z-index: 1;
+            animation: bounce 6s ease-in-out infinite;
+        }
+        .pill.small { width: 10px; height: 10px; }
+        .pill.medium { width: 20px; height: 20px; }
+        .pill.large { width: 30px; height: 30px; }
+        
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #21867a 100%);
+            color: white;
+            padding: 1rem 2rem;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 3;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .back-btn i {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Bubble Animation Pills -->
+        <div class="pill small" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="pill medium" style="top: 15%; left: 20%; animation-delay: 0.3s;"></div>
+        <div class="pill large" style="top: 5%; left: 30%; animation-delay: 0.5s;"></div>
+        <div class="pill small" style="top: 25%; left: 10%; animation-delay: 0.7s;"></div>
+        <div class="pill medium" style="top: 30%; left: 50%; animation-delay: 1.0s;"></div>
+        <div class="pill large" style="top: 35%; left: 80%; animation-delay: 1.2s;"></div>
+        
+        <h1>Heart Disease Risk Assessment</h1>
+        <button class="back-btn" onclick="window.location.href='/'">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </button>
+    </header>
+
+    <div class="container">
+        <form id="heartForm">
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="number" id="age" required>
+            </div>
+
+            <div class="form-group">
+                <label>Sex:</label>
+                <select id="sex" required>
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Chest Pain Type (0-3):</label>
+                <input type="number" id="cp" min="0" max="3" required>
+            </div>
+
+            <div class="form-group">
+                <label>Resting Blood Pressure (mm Hg):</label>
+                <input type="number" id="trestbps" required>
+            </div>
+
+            <div class="form-group">
+                <label>Cholesterol (mg/dl):</label>
+                <input type="number" id="chol" required>
+            </div>
+
+            <div class="form-group">
+                <label>Fasting Blood Sugar > 120 mg/dl:</label>
+                <select id="fbs" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+
+            <button type="submit">Assess Risk</button>
+        </form>
+
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+        document.getElementById('heartForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                age: document.getElementById('age').value,
+                sex: document.getElementById('sex').value,
+                cp: document.getElementById('cp').value,
+                trestbps: document.getElementById('trestbps').value,
+                chol: document.getElementById('chol').value,
+                fbs: document.getElementById('fbs').value
+            };
+
+            try {
+                const response = await fetch('/heart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                displayResult(result.analysis);
+            } catch (error) {
+                displayResult(`Error: ${error.message}`);
+            }
+        });
+
+        function displayResult(analysis) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = analysis;
+            
+            // Reset all classes first
+            resultDiv.className = 'result-box';
+            
+            // Check risk level and apply styling
+            if (analysis.includes('High Risk')) {
+                resultDiv.classList.add('risk-high');
+                resultDiv.style.color = '#dc3545'; // Red text for high risk
+            } else if (analysis.includes('Moderate Risk')) {
+                resultDiv.classList.add('risk-medium');
+                resultDiv.style.color = '#ffc107'; // Yellow text for medium
+            } else {
+                resultDiv.classList.add('risk-low');
+                resultDiv.style.color = '#28a745'; // Green text for low
+            }
+        }
+    </script>
+</body>
+</html> 

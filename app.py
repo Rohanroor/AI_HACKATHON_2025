@@ -266,8 +266,7 @@ def symptoms_diagnosis():
             3. Recommended next steps
             4. Urgency level (emergency/urgent/routine)
             
-            Format clearly and concisely. Use plain text only, no markdown.
-            Remind to consult a real doctor."""
+            Format clearly and concisely. Use plain text only."""
             
             # Get Gemini response
             response = model.generate_content(prompt)
@@ -296,7 +295,7 @@ def skin_health():
                 return jsonify({'error': 'No selected file'}), 400
 
             # Process image and generate analysis
-            img = PIL.Image.open(image_file.stream)
+            img = PIL.Image.open(image_file.stream) 
             
             prompt = """Act as a dermatologist. Analyze this skin image and:
             1. Describe visible findings
@@ -304,7 +303,7 @@ def skin_health():
             3. Suggest diagnostic steps
             4. Recommend treatment options
             5. Note urgency level
-            Use clear, non-technical language. Remind to consult a real doctor."""
+            Use clear, non-technical language. Be very Concise ."""
 
             response = vision_model.generate_content([prompt, img])
             cleaned_response = clean_response_text(response.text)
@@ -316,6 +315,40 @@ def skin_health():
 
     # GET request - show form
     return render_template('skin_health.html')
+
+@app.route('/heart', methods=['GET', 'POST'])
+def heart_disease():
+    if request.method == 'GET':
+        return render_template('heart.html')
+    
+    try:
+        data = request.json
+        prompt = f"""
+        Analyze heart disease risk based on these parameters:
+        - Age: {data['age']}
+        - Sex: {'Male' if data['sex'] == '1' else 'Female'}
+        - Chest Pain Type: {data['cp']} (0: typical angina, 1: atypical angina, 2: non-anginal pain, 3: asymptomatic)
+        - Resting BP: {data['trestbps']} mmHg
+        - Cholesterol: {data['chol']} mg/dl
+        - Fasting Blood Sugar: {'> 120 mg/dl' if data['fbs'] == '1' else 'Normal'}
+
+        Provide:
+        1. Risk percentage estimate
+        2. Key contributing factors
+        3. Recommended lifestyle changes
+        4. When to consult a doctor
+        5. Monitoring suggestions
+
+        Format the response in HTML with proper headings and bullet points.
+        Highlight the risk level (High/Medium/Low) in bold.
+        """
+        
+        response = model.generate_content(prompt)
+        cleaned_response = clean_response_text(response.text)
+        return jsonify({'analysis': cleaned_response})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
