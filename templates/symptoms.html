@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reuse existing styles from index.html */
+        :root { --primary: #2A9D8F; --secondary: #E76F51; }
+        body { font-family: 'Poppins', sans-serif; background: #F8F9FA; padding: 2rem; }
+        .container { max-width: 800px; margin: 2rem auto; }
+        .symptom-form { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        textarea { width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 10px; margin: 1rem 0; }
+        button { background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; cursor: pointer; }
+        .result { margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px; }
+        .disclaimer { color: #666; font-size: 0.9rem; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Symptom Analysis</h1>
+        <div class="symptom-form">
+            <form id="symptomForm" method="POST">
+                <p>Describe your symptoms (e.g., "headache, fever for 3 days, fatigue"):</p>
+                <textarea name="symptoms" rows="5" required></textarea>
+                <button type="submit">Analyze Symptoms</button>
+            </form>
+            
+            {% if diagnosis %}
+            <div class="result">
+                <h3>Possible Health Conditions:</h3>
+                <p>{{ diagnosis | safe }}</p>
+                <div class="disclaimer">
+                    <strong>Important:</strong> This analysis is AI-generated and should not replace professional medical advice. Always consult a healthcare provider for proper diagnosis.
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> 

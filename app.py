@@ -58,22 +58,23 @@ def clean_response_text(text):
     # Remove markdown bold syntax
     cleaned = text.replace('**', '')
     
-    # Add proper spacing after colons
-    cleaned = cleaned.replace(':', ': ')
+    # Convert numbered lists and bullet points
+    cleaned = cleaned.replace('1.', '\n1.') \
+                    .replace('2.', '\n2.') \
+                    .replace('3.', '\n3.') \
+                    .replace('• ', '\n• ')
     
-    # Add line breaks before bullet points
-    cleaned = cleaned.replace('* ', '\n• ')
+    # Add line breaks before headings
+    cleaned = cleaned.replace('Possible Health Conditions:', '\nPossible Health Conditions:\n')
     
-    # Add line breaks between paragraphs (when there's a period followed by space)
-    cleaned = cleaned.replace('. ', '.\n\n')
+    # Preserve existing newlines and split into paragraphs
+    paragraphs = [p.strip() for p in cleaned.split('\n') if p.strip()]
     
-    # Remove any extra blank lines (more than 2)
-    cleaned = '\n'.join([line for line in cleaned.split('\n') if line.strip()])
+    # Join paragraphs with double newlines
+    cleaned = '\n\n'.join(paragraphs)
     
-    # Normalize multiple spaces
-    cleaned = ' '.join(cleaned.split())
-    
-    return cleaned
+    # Convert to HTML line breaks (will be used in template)
+    return cleaned.replace('\n\n', '<br><br>').replace('\n', '<br>')
 
 @app.route('/')
 def home():
@@ -240,6 +241,39 @@ def get_nearby_facilities():
         return jsonify({"facilities": sample_facilities})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/symptoms-diagnosis', methods=['GET', 'POST'])
+def symptoms_diagnosis():
+    diagnosis = None
+    if request.method == 'POST':
+        try:
+            symptoms = request.form['symptoms']
+            
+            # Create medical prompt
+            prompt = f"""Analyze these symptoms: {symptoms}
+            Provide:
+            1. Top 3 possible medical conditions (order by probability)
+            2. Brief explanation for each
+            3. Recommended next steps
+            4. Urgency level (emergency/urgent/routine)
+            
+            Format clearly and concisely. Use plain text only, no markdown.
+            Remind to consult a real doctor."""
+            
+            # Get Gemini response
+            response = model.generate_content(prompt)
+            
+            # Clean and format response
+            cleaned = clean_response_text(response.text)
+            
+            # Ensure line breaks are preserved in HTML
+            diagnosis = cleaned.replace('\n', '<br>')
+            
+        except Exception as e:
+            return render_template('symptoms.html', 
+                diagnosis=f"Error analyzing symptoms: {str(e)}")
+
+    return render_template('symptoms.html', diagnosis=diagnosis)
 
 if __name__ == '__main__':
     app.run(debug=True)
