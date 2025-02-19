@@ -383,7 +383,22 @@
   50% { transform: scaleY(1); }
 }
 
+/* Add these new styles */
+.video-call-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #4285f4 !important; /* Google Meet blue */
+}
 
+.video-call-btn:hover {
+  background: #3367d6 !important;
+}
+
+.video-call-btn i {
+  font-size: 1.2rem;
+}
 
   </style>
 </head>
@@ -489,6 +504,15 @@
       <h2>RakshakAI: Health Care Chatbot</h2>
       <p>Talk to our chatbot for health care support and resources.</p>
       <a href="/mhchatbot">Chat</a>
+    </section>
+
+    <!-- New Video Call Section -->
+    <section id="video-call" class="feature">
+      <h2>Connect with Doctor</h2>
+      <p>Schedule a video consultation with our healthcare professionals.</p>
+      <a href="https://meet.google.com/wnt-ftza-qqq" target="_blank" class="video-call-btn">
+        <i class="fas fa-video"></i> Join Video Call
+      </a>
     </section>
   </div>
 
