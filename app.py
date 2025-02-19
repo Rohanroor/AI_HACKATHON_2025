@@ -15,7 +15,7 @@ if not api_key:
 app = Flask(__name__)
 genai.configure(api_key=api_key)
 generation_config = genai.GenerationConfig(
-    temperature=0.9,
+    temperature=0.8,
     candidate_count=1,
 )
 safety_settings = [

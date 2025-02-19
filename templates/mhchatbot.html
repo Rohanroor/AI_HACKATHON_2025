@@ -1,48 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!--    tex-->
     <title>Gemini Chatbot</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #2A9D8F;
+            --secondary: #E76F51;
+            --background: #F8F9FA;
+            --text: #343A40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #21867a 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            height: 80px;
+        }
+
         .chat-container {
-            width: 80%;
-            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
+
         .chat-box {
-            height: 400px;
+            flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #eee;
-        }
-        .message {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 20px;
             margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
         .user-message {
-            background-color: #e3f2fd;
-            margin-left: 20%;
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
         }
+
         .bot-message {
-            background-color: #f5f5f5;
-            margin-right: 20%;
+            background-color: #f0f0f0;
+            align-self: flex-start;
         }
+
         .input-container {
             display: flex;
             gap: 10px;
+            padding: 10px 0;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
+
         #user-input {
-            flex-grow: 1;
-            padding: 10px;
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
         }
+
+        #user-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #d45b3d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pill {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      z-index: 1;
+      animation: bounce 6s ease-in-out infinite;
+    }
+    .pill.small { width: 10px; height: 10px; }
+    .pill.medium { width: 20px; height: 20px; }
+    .pill.large { width: 30px; height: 30px; }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+
     </style>
 </head>
 <body>
+    <header>
+        <div class="pill small" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="pill medium" style="top: 15%; left: 20%; animation-delay: 0.3s;"></div>
+    <div class="pill large" style="top: 5%; left: 30%; animation-delay: 0.5s;"></div>
+    <div class="pill small" style="top: 25%; left: 10%; animation-delay: 0.7s;"></div>
+    <div class="pill medium" style="top: 30%; left: 50%; animation-delay: 1.0s;"></div>
+    <div class="pill large" style="top: 35%; left: 80%; animation-delay: 1.2s;"></div>
+    <div class="pill small" style="top: 45%; left: 20%; animation-delay: 1.5s;"></div>
+    <div class="pill medium" style="top: 50%; left: 70%; animation-delay: 1.7s;"></div>
+    <div class="pill large" style="top: 60%; left: 30%; animation-delay: 1.9s;"></div>
+    <div class="pill small" style="top: 65%; left: 10%; animation-delay: 2.1s;"></div>
+    <div class="pill medium" style="top: 70%; left: 40%; animation-delay: 2.3s;"></div>
+    <div class="pill large" style="top: 80%; left: 60%; animation-delay: 2.5s;"></div>
+    <div class="pill small" style="top: 5%; left: 80%; animation-delay: 2.7s;"></div>
+    <div class="pill medium" style="top: 15%; left: 90%; animation-delay: 2.9s;"></div>
+    <div class="pill large" style="top: 25%; left: 70%; animation-delay: 3.1s;"></div>
+    <div class="pill small" style="top: 35%; left: 5%; animation-delay: 3.3s;"></div>
+    <div class="pill medium" style="top: 55%; left: 90%; animation-delay: 3.5s;"></div>
+    <div class="pill large" style="top: 65%; left: 50%; animation-delay: 3.7s;"></div>
+    <div class="pill small" style="top: 75%; left: 20%; animation-delay: 3.9s;"></div>
+    <div class="pill medium" style="top: 85%; left: 10%; animation-delay: 4.1s;"></div>
+        <h1>RakshakAI: Giving You A Complete Health Support</h1>
+        <button id="backBtn">Back</button>
+        <!-- Add bouncing pills from index.html -->
+
+    </header>
+
     <div class="chat-container">
-        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                Hello! I'm Rakshak your personal Health Care Companion. How can I help today?
+            </div>
+        </div>
+
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Type your message...">
             <button onclick="sendMessage()">Send</button>
@@ -60,10 +197,10 @@
         }
 
         function sendMessage() {
-            
+
             const input = document.getElementById('user-input');
             const message = input.value.trim();
-            
+
             if (message) {
                 addMessage(message, true);
                 input.value = '';
@@ -96,6 +233,14 @@
                 sendMessage();
             }
         });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+  window.location.href = '/';
+});
+
+
+
+
     </script>
 </body>
-</html> 
+</html>
