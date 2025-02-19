@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
-
+import pickle
 # Load environment variables
 load_dotenv()
 
@@ -15,7 +15,7 @@ if not api_key:
 app = Flask(__name__)
 genai.configure(api_key=api_key)
 generation_config = genai.GenerationConfig(
-    temperature=0.9,
+    temperature=0.8,
     candidate_count=1,
 )
 safety_settings = [
@@ -101,6 +101,36 @@ def chat_endpoint():
         return jsonify({
             'error': str(e)
         }), 500
+
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            pregnancies = int(request.form['pregnancies'])
+            glucose = int(request.form['glucose'])
+            blood_pressure = int(request.form['blood-pressure'])
+            skin_thickness = int(request.form['skin-thickness'])
+            insulin = int(request.form['insulin'])
+            bmi = float(request.form['bmi'])
+            diabetes_pedigree = float(request.form['diabetes-pedigree'])
+            age = int(request.form['age'])
+            
+            data = [pregnancies, glucose, blood_pressure, skin_thickness, 
+                    insulin, bmi, diabetes_pedigree, age]
+            
+            # Load model and make prediction
+            with open('model.pickle', 'rb') as file:
+                model = pickle.load(file)
+            result = model.predict([data])
+            
+            outcome = 'No Diabetic' if result[0] == 0 else 'Diabetic Patient'
+            return jsonify({'message': outcome})
+            
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    return render_template('predict.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
