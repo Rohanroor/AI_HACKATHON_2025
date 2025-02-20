@@ -127,6 +127,26 @@
         .back-btn i {
             font-size: 0.9rem;
         }
+
+        button2 {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+        }
+
+        button2:hover {
+            background: #d45b3d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -140,9 +160,7 @@
         <div class="pill large" style="top: 35%; left: 80%; animation-delay: 1.2s;"></div>
         
         <h1>Heart Disease Risk Assessment</h1>
-        <button class="back-btn" onclick="window.location.href='/'">
-            <i class="fas fa-arrow-left"></i> Back to Home
-        </button>
+        <button2 id="backBtn">Back</button2>
     </header>
 
     <div class="container">
@@ -232,6 +250,10 @@
                 resultDiv.classList.add('risk-low');
             }
         }
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+  window.location.href = '/';
+});
     </script>
 </body>
 </html> 
